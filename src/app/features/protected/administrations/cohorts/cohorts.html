@@ -1,1 +1,160 @@
-<p>cohorts works!</p>
+<div class="p-6 bg-gray-50 min-h-screen w-full">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestion des Cohortes</h1>
+      <p class="text-gray-600">Gérez les cohortes d'étudiants</p>
+    </div>
+    <p-button 
+      label="Nouvelle Cohorte" 
+      icon="fas fa-plus" 
+      (onClick)="showAddDialog = true"
+    ></p-button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Nom de la cohorte..." 
+          [(ngModel)]="searchTerm"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+        <p-select 
+          [options]="departmentOptions" 
+          [(ngModel)]="selectedDepartment"
+          placeholder="Tous les départements"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Année académique</label>
+        <p-select 
+          [options]="academicYearOptions" 
+          [(ngModel)]="selectedAcademicYear"
+          placeholder="Toutes les années"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cohorts Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let cohort of filteredCohorts" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0 h-12 w-12">
+              <div class="h-12 w-12 rounded-lg bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center text-white font-bold">
+                <i class="fas fa-users-viewfinder"></i>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">{{ cohort.name }}</h3>
+              <p class="text-sm text-gray-500">{{ cohort.departmentId }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-calendar w-4 mr-2"></i>
+            <span>Année: {{ cohort.academicYear }}</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-info-circle w-4 mr-2"></i>
+            <span>{{ cohort.description || 'Aucune description' }}</span>
+          </div>
+        </div>
+
+        <div class="flex space-x-2">
+          <p-button 
+            label="Voir" 
+            icon="fas fa-eye" 
+            variant="outlined"
+            size="small"
+            class="flex-1"
+            styleClass="w-full"
+            (onClick)="viewCohort(cohort)"
+          ></p-button>
+          <p-button 
+            label="Modifier" 
+            icon="fas fa-edit" 
+            variant="outlined"
+            size="small"
+            class="flex-1"
+            styleClass="w-full"
+            (onClick)="editCohort(cohort)"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Cohort Dialog -->
+  <p-dialog 
+    header="Nouvelle Cohorte" 
+    [(visible)]="showAddDialog" 
+    [modal]="true" 
+    [style]="{width: '600px'}"
+    [closable]="true"
+  >
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Nom de la cohorte</label>
+        <input type="text" pInputText placeholder="L3 Informatique 2024" class="w-full" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <textarea pTextarea rows="3" placeholder="Description de la cohorte..." class="w-full"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+          <p-select 
+            [options]="departmentOptions" 
+            placeholder="Sélectionner"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Année académique</label>
+          <p-select 
+            [options]="academicYearOptions" 
+            placeholder="Sélectionner"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end space-x-2">
+        <p-button 
+          label="Annuler" 
+          variant="outlined" 
+          (onClick)="showAddDialog = false"
+        ></p-button>
+        <p-button 
+          label="Créer" 
+          (onClick)="createCohort()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

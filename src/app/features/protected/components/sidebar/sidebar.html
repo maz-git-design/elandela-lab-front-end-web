@@ -1,0 +1,144 @@
+<div
+  class="bg-white h-full flex flex-col border-gray-200 border-r shadow-sm transition-all duration-300 relative z-10"
+  [class.w-80]="!collapsed"
+  [class.w-16]="collapsed"
+  [class.p-4]="!collapsed"
+  [class.p-2]="collapsed"
+>
+  <div class="mb-4" [class.h-20]="!collapsed" [class.h-16]="collapsed">
+    <img 
+      *ngIf="!collapsed" 
+      src="logo/elandelalab-logo.png" 
+      alt="logo" 
+      class="h-11" 
+    />
+    <div 
+      *ngIf="collapsed" 
+      class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mx-auto"
+    >
+      E
+    </div>
+    <p-divider class="h-0 mt-2"></p-divider>
+  </div>
+  <p-button
+    *ngIf="!collapsed"
+    label="Nouveau"
+    icon="pi pi-plus"
+    variant="outlined"
+    class="w-full"
+    styleClass="w-full"
+  ></p-button>
+  <p-button
+    *ngIf="collapsed"
+    icon="pi pi-plus"
+    variant="outlined"
+    class="w-full"
+    styleClass="w-full justify-center"
+    pTooltip="Nouveau"
+    tooltipPosition="right"
+  ></p-button>
+  <div class="flex flex-col w-full mt-4 justify-between h-full">
+    <div class="w-full">
+      <p-panelmenu [model]="menus()" class="border-0 gap-0 overflow-visible" [multiple]="false">
+        <ng-template #item let-item>
+          <a
+            class="pRipple w-full flex items-center cursor-pointer group hover:bg-gray-100 hover:rounded-md rounded-md"
+            [class.px-4]="!collapsed"
+            [class.py-4]="!collapsed"
+            [class.px-2]="collapsed"
+            [class.py-3]="collapsed"
+            [class.justify-center]="collapsed"
+            [ngClass]="{ 'bg-blue-50': isCurrentItem(item) }"
+            [id]="item.id"
+            [pTooltip]="collapsed ? item.label : ''"
+            [tooltipPosition]="'right'"
+          >
+            <i
+              class="{{ item.icon }}  text-lg"
+              [ngClass]="{
+                'text-blue-600': isCurrentItem(item),
+                'text-gray-600': !isCurrentItem(item)
+              }"
+            ></i>
+            <span
+              *ngIf="!collapsed"
+              class="ml-2 text-sm w-full"
+              [ngClass]="{
+                'text-blue-600 font-bold': isCurrentItem(item),
+                'text-gray-600 font-semibold':
+                  !isCurrentItem(item) || (isCurrentItem(isCurrentItem) && item.items)
+              }"
+            >
+              {{ item.label }}
+            </span>
+            <p-badge *ngIf="item.badge" class="ml-auto" [value]="item.badge" />
+
+            <i
+              *ngIf="item.items && !collapsed"
+              class="pi pi-angle-down text-primary ml-auto text-blue-600"
+            ></i>
+          </a>
+        </ng-template>
+      </p-panelmenu>
+    </div>
+    <div class="ici">
+      <a
+        class="pRipple w-full flex items-center cursor-pointer bg-gray-100 group hover:bg-gray-200 hover:rounded-md rounded-md"
+        [class.px-4]="!collapsed"
+        [class.py-4]="!collapsed"
+        [class.px-2]="collapsed"
+        [class.py-3]="collapsed"
+        [class.justify-center]="collapsed"
+        id="id"
+        (click)="toggle($event)"
+        [pTooltip]="collapsed ? 'Lionnel Mazuba' : ''"
+        [tooltipPosition]="'right'"
+      >
+        <i
+          class="fas fa-circle-user text-2xl"
+          [ngClass]="{
+                'text-blue-600': false,
+                'text-gray-600': true
+              }"
+        ></i>
+        <div *ngIf="!collapsed" class="flex flex-col items-start justify-start">
+          <span
+            class="ml-2 text-sm w-full"
+            [ngClass]="{
+                'text-blue-600 font-bold': false,
+                'text-gray-600 font-semibold': true
+              }"
+          >
+            Lionnel Mazuba
+          </span>
+          <span class="ml-2 text-xs text-gray-500">Admin</span>
+        </div>
+      </a>
+      <p-popover #op>
+        <div class="flex flex-col min-w-48 p-0 bg-white border border-gray-200 rounded-lg shadow-lg">
+          <div>
+            <ul class="list-none p-0 m-0 flex flex-col">
+              <li
+                *ngFor="let item of [
+                { label: 'Mon profile', separator: false, icon: 'fas fa-user', route: ['/protected/profile'] },
+                { label: 'Paramètres', separator:false, icon: 'fas fa-cog', route: ['/protected/settings'] },
+                { label: 'Déconnexion', separator: true, icon: 'fas fa-arrow-right-from-bracket', route: ['/auth/login'] }
+              ]"
+              >
+                @if(item.separator) {
+                <p-divider class="h-0"></p-divider>
+                }
+                <div
+                  class="flex items-center gap-2 p-3 hover:bg-gray-100 cursor-pointer rounded-md"
+                >
+                  <i class="{{ item.icon }} "></i>
+                  <span class="">{{ item.label }}</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </p-popover>
+    </div>
+  </div>
+</div>

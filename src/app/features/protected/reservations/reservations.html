@@ -1,1 +1,374 @@
-<p>reservations works!</p>
+<div class="p-6 bg-gray-50 min-h-screen w-full">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestion des Réservations</h1>
+      <p class="text-gray-600">Gérez les réservations de laboratoires</p>
+    </div>
+    <p-button 
+      label="Nouvelle Réservation" 
+      icon="fas fa-plus" 
+      (onClick)="showAddDialog = true"
+    ></p-button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">En attente</p>
+          <p class="text-2xl font-bold text-yellow-600">{{ getStatusCount('pending') }}</p>
+        </div>
+        <div class="p-2 bg-yellow-100 rounded-full">
+          <i class="fas fa-clock text-yellow-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Approuvées</p>
+          <p class="text-2xl font-bold text-green-600">{{ getStatusCount('approved') }}</p>
+        </div>
+        <div class="p-2 bg-green-100 rounded-full">
+          <i class="fas fa-check-circle text-green-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Rejetées</p>
+          <p class="text-2xl font-bold text-red-600">{{ getStatusCount('rejected') }}</p>
+        </div>
+        <div class="p-2 bg-red-100 rounded-full">
+          <i class="fas fa-times-circle text-red-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total</p>
+          <p class="text-2xl font-bold text-blue-600">{{ reservations.length }}</p>
+        </div>
+        <div class="p-2 bg-blue-100 rounded-full">
+          <i class="fas fa-calendar-check text-blue-600"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Utilisateur, laboratoire..." 
+          [(ngModel)]="searchTerm"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+        <p-select 
+          [options]="statusOptions" 
+          [(ngModel)]="selectedStatus"
+          placeholder="Tous les statuts"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Priorité</label>
+        <p-select 
+          [options]="priorityOptions" 
+          [(ngModel)]="selectedPriority"
+          placeholder="Toutes les priorités"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+        <p-select 
+          [options]="typeOptions" 
+          [(ngModel)]="selectedType"
+          placeholder="Tous les types"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reservations Table -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <p-table [value]="filteredReservations" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" 
+             currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} réservations">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Réservation
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Laboratoire
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Période
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Statut
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Priorité
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-reservation>
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold">
+                  <i class="{{ getTypeIcon(reservation.reservationType) }}"></i>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ reservation.userId }} - {{ getTypeLabel(reservation.reservationType) }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  Demandé le {{ reservation.requestedAt | date:'short' }}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ reservation.labId }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{ reservation.desiredStartTime | date:'short' }}</div>
+            <div class="text-sm text-gray-500">{{ reservation.desiredEndTime | date:'short' }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span 
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-800': reservation.status === 'pending',
+                'bg-green-100 text-green-800': reservation.status === 'approved',
+                'bg-red-100 text-red-800': reservation.status === 'rejected',
+                'bg-blue-100 text-blue-800': reservation.status === 'suggested',
+                'bg-gray-100 text-gray-800': reservation.status === 'cancelled'
+              }"
+            >
+              {{ getStatusLabel(reservation.status) }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span 
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="{
+                'bg-red-100 text-red-800': reservation.priority === 'urgent',
+                'bg-orange-100 text-orange-800': reservation.priority === 'high',
+                'bg-blue-100 text-blue-800': reservation.priority === 'normal',
+                'bg-gray-100 text-gray-800': reservation.priority === 'low'
+              }"
+            >
+              {{ getPriorityLabel(reservation.priority) }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <p-button 
+                icon="fas fa-eye" 
+                variant="outlined" 
+                size="small"
+                [text]="true"
+                (onClick)="viewReservation(reservation)"
+                pTooltip="Voir"
+              ></p-button>
+              <p-button 
+                *ngIf="reservation.status === 'pending'"
+                icon="fas fa-check" 
+                variant="outlined" 
+                size="small"
+                [text]="true"
+                severity="success"
+                (onClick)="approveReservation(reservation)"
+                pTooltip="Approuver"
+              ></p-button>
+              <p-button 
+                *ngIf="reservation.status === 'pending'"
+                icon="fas fa-times" 
+                variant="outlined" 
+                size="small"
+                [text]="true"
+                severity="danger"
+                (onClick)="rejectReservation(reservation)"
+                pTooltip="Rejeter"
+              ></p-button>
+              <p-button 
+                icon="fas fa-edit" 
+                variant="outlined" 
+                size="small"
+                [text]="true"
+                (onClick)="editReservation(reservation)"
+                pTooltip="Modifier"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Add Reservation Dialog -->
+  <p-dialog 
+    header="Nouvelle Réservation" 
+    [(visible)]="showAddDialog" 
+    [modal]="true" 
+    [style]="{width: '700px'}"
+    [closable]="true"
+  >
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Laboratoire *</label>
+          <p-select 
+            [options]="labOptions" 
+            [(ngModel)]="newReservation.labId"
+            placeholder="Sélectionner un laboratoire"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Type de réservation</label>
+          <p-select 
+            [options]="typeOptions" 
+            [(ngModel)]="newReservation.reservationType"
+            placeholder="Sélectionner un type"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date/Heure de début *</label>
+          <p-datepicker 
+            [(ngModel)]="newReservation.desiredStartTime"
+            placeholder="Sélectionner"
+            [showTime]="true"
+            class="w-full"
+          ></p-datepicker>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date/Heure de fin *</label>
+          <p-datepicker 
+            [(ngModel)]="newReservation.desiredEndTime"
+            placeholder="Sélectionner"
+            [showTime]="true"
+            class="w-full"
+          ></p-datepicker>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Priorité</label>
+          <p-select 
+            [options]="priorityOptions" 
+            [(ngModel)]="newReservation.priority"
+            placeholder="Sélectionner une priorité"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Rôle du demandeur</label>
+          <p-select 
+            [options]="requesterRoleOptions" 
+            [(ngModel)]="newReservation.requesterRole"
+            placeholder="Sélectionner un rôle"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Activités *</label>
+          <p-multiselect 
+            [options]="activityOptions" 
+            [(ngModel)]="newReservation.activities"
+            placeholder="Sélectionner les activités"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-multiselect>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Équipements</label>
+          <p-multiselect 
+            [options]="equipmentOptions" 
+            [(ngModel)]="newReservation.equipmentIds"
+            placeholder="Sélectionner les équipements"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-multiselect>
+        </div>
+      </div>
+      <div *ngIf="newReservation.reservationType === 'group'">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Membres du groupe</label>
+        <p-multiselect 
+          [options]="userOptions" 
+          [(ngModel)]="newReservation.groupMembers"
+          placeholder="Sélectionner les membres"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-multiselect>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Motivation de la réservation *</label>
+        <textarea 
+          pTextarea 
+          [(ngModel)]="motivation"
+          placeholder="Expliquez la raison de votre demande de réservation..."
+          rows="4"
+          class="w-full"
+        ></textarea>
+        <p class="text-xs text-gray-500 mt-1">Veuillez préciser l'objectif et la justification de votre réservation</p>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end space-x-2">
+        <p-button 
+          label="Annuler" 
+          variant="outlined" 
+          (onClick)="showAddDialog = false"
+        ></p-button>
+        <p-button 
+          label="Créer" 
+          (onClick)="createReservation()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

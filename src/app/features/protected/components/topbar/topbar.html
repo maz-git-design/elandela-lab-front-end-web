@@ -1,0 +1,113 @@
+<div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+  <!-- Left side - Breadcrumb -->
+  <div class="flex items-center space-x-4">
+    <p-button 
+      icon="fas fa-bars" 
+      variant="outlined" 
+      [text]="true"
+      size="small"
+      (onClick)="toggleSidebar()"
+      pTooltip="Basculer le menu"
+    ></p-button>
+    <p-breadcrumb 
+      [model]="breadcrumbItems" 
+      [home]="home"
+      class="border-0 p-0"
+    ></p-breadcrumb>
+  </div>
+
+  <!-- Right side - User actions -->
+  <div class="flex items-center space-x-4">
+    <!-- Notifications -->
+    <div class="relative">
+      <p-button 
+        icon="fas fa-bell" 
+        variant="outlined" 
+        [text]="true"
+        size="small"
+        (onClick)="toggleNotifications($event)"
+        pTooltip="Notifications"
+      ></p-button>
+      <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+        {{ notificationCount }}
+      </span>
+      <p-popover #notificationsPopover>
+        <div class="w-80 max-h-96 overflow-y-auto">
+          <div class="p-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+          </div>
+          <div class="divide-y divide-gray-200">
+            <div *ngFor="let notification of notifications" class="p-4 hover:bg-gray-50">
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="{{ notification.icon }} text-blue-600 text-sm"></i>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+                  <p class="text-sm text-gray-500">{{ notification.message }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 border-t border-gray-200">
+            <p-button 
+              label="Voir toutes les notifications" 
+              variant="outlined" 
+              size="small"
+              class="w-full"
+              styleClass="w-full"
+            ></p-button>
+          </div>
+        </div>
+      </p-popover>
+    </div>
+
+    <!-- Quick Actions -->
+    <p-button 
+      icon="fas fa-plus" 
+      variant="outlined" 
+      [text]="true"
+      size="small"
+      (onClick)="toggleQuickActions($event)"
+      pTooltip="Actions rapides"
+    ></p-button>
+    <p-popover #quickActionsPopover>
+      <div class="w-64">
+        <div class="p-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Actions Rapides</h3>
+        </div>
+        <div class="p-2">
+          <div class="space-y-1">
+            <button 
+              *ngFor="let action of quickActions" 
+              class="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+              (click)="executeQuickAction(action)"
+            >
+              <i class="{{ action.icon }} w-5 mr-3"></i>
+              {{ action.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </p-popover>
+
+    <!-- Search -->
+    <div class="relative">
+      <input 
+        type="text" 
+        pInputText 
+        placeholder="Rechercher..." 
+        class="pl-10 pr-4 py-2 w-64"
+        [(ngModel)]="searchQuery"
+      />
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <i class="fas fa-search text-gray-400"></i>
+      </div>
+    </div>
+
+
+  </div>
+</div>

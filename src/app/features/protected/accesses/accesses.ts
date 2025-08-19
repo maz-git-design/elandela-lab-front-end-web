@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-
+import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-accesses',
-  imports: [],
+  imports: [RouterOutlet],
   templateUrl: './accesses.html',
-  styleUrl: './accesses.scss'
+  styleUrl: './accesses.scss',
 })
-export class Accesses {
-
-}
+export class Accesses {}

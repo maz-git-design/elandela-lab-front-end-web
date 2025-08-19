@@ -1,1 +1,120 @@
-<p>login works!</p>
+<div class="h-full mb-8" id="login">
+  <div class="text-center mb-5">
+    <div class="flex items-center justify-center">
+      <img src="logo/logo-elab.png" alt="Image" height="80" class="mb-3" />
+    </div>
+
+    <p-divider></p-divider>
+    <div class="text-900 text-3xl font-medium mb-3">{{ "Connexion" }}</div>
+    <span class="line-height-3 text-sm"
+      >{{ "Fournir les informations suivantes pour vous connecter" }}</span
+    >
+  </div>
+
+  <div [formGroup]="loginForm">
+    <div class="mb-3">
+      <label
+        for="email"
+        class="flex text-900 font-medium mb-2 gap-2 items-center"
+      >
+        {{ "Nom d'utilisateur" }}</label
+      >
+      <input
+        id="email"
+        type="text"
+        pInputText
+        placeholder="{{ 'email'  }}"
+        formControlName="email"
+        [ngClass]="{ 'ng-invalid ng-dirty': email?.invalid }"
+        class="w-full mb-1"
+      />
+      @if(email?.touched) {
+      <div>
+        <small
+          class="p-error block text-red-500"
+          *ngIf="email?.errors?.['required']"
+          >{{ "emailRequired" }}</small
+        >
+        <small
+          class="p-error block text-red-500"
+          *ngIf="email?.errors?.['email']"
+          >{{ "emailInvalid" }}</small
+        >
+      </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label
+        for="password"
+        class="flex text-900 font-medium mb-2 gap-2 items-center"
+      >
+        {{ "Mot de passe" }}</label
+      >
+      <p-password
+        id="password"
+        class="w-full"
+        formControlName="password"
+        placeholder="{{ 'password' }}"
+        [style]="{ width: '100%' }"
+        inputStyleClass="w-full"
+        [toggleMask]="true"
+        [ngClass]="{
+          'ng-invalid ng-dirty': password?.invalid
+        }"
+        [promptLabel]="'Entrer un mot de passe'"
+        [weakLabel]="'Faible' "
+        [mediumLabel]="'Moyen' "
+        [strongLabel]="'Fort' "
+        [feedback]="false"
+      >
+      </p-password>
+      @if(password?.touched) {
+      <div class="mt-1">
+        <small
+          class="p-error block text-red-500"
+          *ngIf="password?.errors?.['required']"
+        >
+          {{ "passwordRequired" }}</small
+        >
+        <small
+          class="p-error block text-red-500"
+          *ngIf="password?.errors?.['pattern']"
+        >
+          {{ "passwordWeak" }}
+        </small>
+      </div>
+      }
+    </div>
+
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex align-items-center">
+        <p-checkbox
+          id="rememberMe"
+          [binary]="true"
+          formControlName="rememberMe"
+          styleClass="mr-2"
+          (onChange)="onRememberMeChange($event)"
+        ></p-checkbox>
+        <label for="rememberMe">{{ "Se souvenir de moi" }}</label>
+      </div>
+      <p-button
+        [label]="'Mot de passe oublié ?' "
+        [link]="true"
+        id="forgotpassword"
+        routerLink="/auth/reset-password"
+      />
+    </div>
+
+    <p-button
+      pRipple
+      id="login-submit-button"
+      icon="pi pi-user"
+      [label]="'Se connecter' "
+      styleClass="w-full mt-6 mb-6"
+      [loading]="loading"
+      [disabled]="loginForm.invalid"
+      (onClick)="signin()"
+    />
+  </div>
+</div>

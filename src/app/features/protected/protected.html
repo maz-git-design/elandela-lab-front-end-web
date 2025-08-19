@@ -1,1 +1,21 @@
-<p>protected works!</p>
+<div class="flex h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <div
+    class="flex-shrink-0 transition-all duration-300"
+    [class.w-80]="!sidebarCollapsed"
+    [class.w-16]="sidebarCollapsed"
+  >
+    <app-sidebar [collapsed]="sidebarCollapsed"></app-sidebar>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Topbar -->
+    <app-topbar (sidebarToggle)="toggleSidebar()"></app-topbar>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

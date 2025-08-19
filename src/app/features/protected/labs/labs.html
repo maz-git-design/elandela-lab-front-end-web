@@ -1,1 +1,177 @@
-<p>labs works!</p>
+<div class="p-6 bg-gray-50 min-h-screen w-full">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestion des Laboratoires</h1>
+      <p class="text-gray-600">Gérez vos espaces de laboratoire</p>
+    </div>
+    <p-button 
+      label="Nouveau Laboratoire" 
+      icon="fas fa-plus" 
+      (onClick)="showAddDialog = true"
+    ></p-button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Nom du laboratoire..." 
+          [(ngModel)]="searchTerm"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+        <p-select 
+          [options]="departments" 
+          [(ngModel)]="selectedDepartment"
+          placeholder="Tous les départements"
+          optionLabel="name"
+          optionValue="id"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+        <p-select 
+          [options]="statusOptions" 
+          [(ngModel)]="selectedStatus"
+          placeholder="Tous les statuts"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Labs Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let lab of filteredLabs" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+      <!-- Lab Image -->
+      <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+        <div class="absolute top-4 right-4">
+          <span 
+            class="px-2 py-1 rounded-full text-xs font-medium"
+            [ngClass]="{
+              'bg-green-100 text-green-800': lab.status === 'active',
+              'bg-red-100 text-red-800': lab.status === 'maintenance',
+              'bg-yellow-100 text-yellow-800': lab.status === 'reserved'
+            }"
+          >
+            {{ getStatusLabel(lab.status) }}
+          </span>
+        </div>
+        <div class="absolute bottom-4 left-4 text-white">
+          <h3 class="text-xl font-bold">{{ lab.name }}</h3>
+          <p class="text-blue-100">{{ lab.code }}</p>
+        </div>
+      </div>
+
+      <!-- Lab Details -->
+      <div class="p-6">
+        <div class="space-y-3">
+          <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+            <span>{{ lab.location.building }}, {{ lab.location.roomNumber }}</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-users w-4 mr-2"></i>
+            <span>Capacité: {{ lab.capacities.users }} personnes</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-desktop w-4 mr-2"></i>
+            <span>{{ lab.equipmentList.length }} équipements</span>
+          </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="mt-4">
+          <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+            Statut: {{ getStatusLabel(lab.status) }}
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-6 flex space-x-2">
+          <p-button 
+            label="Voir" 
+            icon="fas fa-eye" 
+            variant="outlined"
+            size="small"
+            class="flex-1"
+            styleClass="w-full"
+            (onClick)="viewLab(lab)"
+          ></p-button>
+          <p-button 
+            label="Modifier" 
+            icon="fas fa-edit" 
+            variant="outlined"
+            size="small"
+            class="flex-1"
+            styleClass="w-full"
+            (onClick)="editLab(lab)"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Lab Dialog -->
+  <p-dialog 
+    header="Nouveau Laboratoire" 
+    [(visible)]="showAddDialog" 
+    [modal]="true" 
+    [style]="{width: '600px'}"
+    [closable]="true"
+  >
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Nom du laboratoire</label>
+        <input type="text" pInputText placeholder="Ex: Laboratoire de Chimie" class="w-full" />
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+          <p-select 
+            [options]="departments" 
+            placeholder="Sélectionner"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Capacité</label>
+          <input type="number" pInputText placeholder="20" class="w-full" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Localisation</label>
+        <input type="text" pInputText placeholder="Bâtiment A, Étage 2, Salle 201" class="w-full" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <textarea pTextarea rows="3" placeholder="Description du laboratoire..." class="w-full"></textarea>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end space-x-2">
+        <p-button 
+          label="Annuler" 
+          variant="outlined" 
+          (onClick)="showAddDialog = false"
+        ></p-button>
+        <p-button 
+          label="Créer" 
+          (onClick)="createLab()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

@@ -1,0 +1,360 @@
+<div class="p-6 bg-gray-50 min-h-screen w-full">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">
+        Gestion des Équipements
+      </h1>
+      <p class="text-gray-600">Gérez les équipements de vos laboratoires</p>
+    </div>
+    <p-button
+      label="Nouvel Équipement"
+      icon="fas fa-plus"
+      (onClick)="showAddDialog = true"
+    ></p-button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Équipements</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ equipmentStats.total }}
+          </p>
+        </div>
+        <div class="p-2 bg-blue-100 rounded-full">
+          <i class="fas fa-desktop text-blue-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Disponibles</p>
+          <p class="text-2xl font-bold text-green-600">
+            {{ equipmentStats.available }}
+          </p>
+        </div>
+        <div class="p-2 bg-green-100 rounded-full">
+          <i class="fas fa-check-circle text-green-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">En Maintenance</p>
+          <p class="text-2xl font-bold text-orange-600">
+            {{ equipmentStats.maintenance }}
+          </p>
+        </div>
+        <div class="p-2 bg-orange-100 rounded-full">
+          <i class="fas fa-wrench text-orange-600"></i>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Hors Service</p>
+          <p class="text-2xl font-bold text-red-600">
+            {{ equipmentStats.outOfOrder }}
+          </p>
+        </div>
+        <div class="p-2 bg-red-100 rounded-full">
+          <i class="fas fa-times-circle text-red-600"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Rechercher</label
+        >
+        <input
+          type="text"
+          pInputText
+          placeholder="Nom, modèle, série..."
+          [(ngModel)]="searchTerm"
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Catégorie</label
+        >
+        <p-select
+          [options]="categoryOptions"
+          [(ngModel)]="selectedCategory"
+          placeholder="Toutes les catégories"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Laboratoire</label
+        >
+        <p-select
+          [options]="labOptions"
+          [(ngModel)]="selectedLab"
+          placeholder="Tous les laboratoires"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Statut</label
+        >
+        <p-select
+          [options]="statusOptions"
+          [(ngModel)]="selectedStatus"
+          placeholder="Tous les statuts"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equipment Table -->
+  <div
+    class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+  >
+    <p-table
+      [value]="filteredEquipments"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} équipements"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Équipement
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Catégorie
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Laboratoire
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Statut
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Dernière maintenance
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-equipment>
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div
+                  class="h-10 w-10 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white"
+                >
+                  <i class="{{ getEquipmentIcon(equipment.categoryId) }}"></i>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ equipment.name }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{ equipment.code }} - {{ equipment.serialNumber }}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+            >
+              {{ equipment.categoryId }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ equipment.currentLabId }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="{
+                    'bg-green-100 text-green-800': equipment.currentStatus?.state === 'available',
+                    'bg-yellow-100 text-yellow-800': equipment.currentStatus?.state === 'in-use',
+                    'bg-orange-100 text-orange-800': equipment.currentStatus?.state === 'maintenance',
+                    'bg-red-100 text-red-800': equipment.currentStatus?.state === 'out-of-order'
+                  }"
+            >
+              {{ getStatusLabel(equipment.currentStatus?.state || 'unknown') }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ equipment.currentStatus?.updatedAt | date:'short' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <p-button
+                icon="fas fa-eye"
+                variant="outlined"
+                size="small"
+                [text]="true"
+                (onClick)="viewEquipment(equipment)"
+                pTooltip="Voir"
+              ></p-button>
+              <p-button
+                icon="fas fa-edit"
+                variant="outlined"
+                size="small"
+                [text]="true"
+                (onClick)="editEquipment(equipment)"
+                pTooltip="Modifier"
+              ></p-button>
+              <p-button
+                icon="fas fa-wrench"
+                variant="outlined"
+                size="small"
+                [text]="true"
+                severity="warn"
+                (onClick)="scheduleMaintenanceEquipment(equipment)"
+                pTooltip="Maintenance"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Add Equipment Dialog -->
+  <p-dialog
+    header="Nouvel Équipement"
+    [(visible)]="showAddDialog"
+    [modal]="true"
+    [style]="{width: '700px'}"
+    [closable]="true"
+  >
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Nom de l'équipement</label
+          >
+          <input
+            type="text"
+            pInputText
+            placeholder="Microscope optique"
+            class="w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Modèle</label
+          >
+          <input
+            type="text"
+            pInputText
+            placeholder="Olympus CX23"
+            class="w-full"
+          />
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Code équipement</label
+          >
+          <input
+            type="text"
+            pInputText
+            placeholder="EQ-MS-001"
+            class="w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Catégorie</label
+          >
+          <p-select
+            [options]="categoryOptions"
+            placeholder="Sélectionner"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Laboratoire</label
+          >
+          <p-select
+            [options]="labOptions"
+            placeholder="Sélectionner"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Date d'entrée</label
+          >
+          <p-datepicker
+            placeholder="Sélectionner une date"
+            class="w-full"
+          ></p-datepicker>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Description</label
+        >
+        <textarea
+          pTextarea
+          rows="3"
+          placeholder="Description de l'équipement..."
+          class="w-full"
+        ></textarea>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end space-x-2">
+        <p-button
+          label="Annuler"
+          variant="outlined"
+          (onClick)="showAddDialog = false"
+        ></p-button>
+        <p-button label="Créer" (onClick)="createEquipment()"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
