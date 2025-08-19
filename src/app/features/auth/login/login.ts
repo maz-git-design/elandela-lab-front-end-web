@@ -90,4 +90,15 @@ export class Login {
       localStorage.removeItem('email');
     }
   }
+
+  quickLogin(role: 'admin' | 'teacher' | 'student') {
+    const credentials = {
+      admin: { email: 'admin@elandela.com', password: 'admin123456' },
+      teacher: { email: 'teacher@elandela.com', password: 'teacher123456' },
+      student: { email: 'student@elandela.com', password: 'student123456' }
+    };
+    
+    this.loginForm.patchValue(credentials[role]);
+    this.signin();
+  }
 }

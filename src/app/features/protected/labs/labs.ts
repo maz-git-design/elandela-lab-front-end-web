@@ -6,6 +6,8 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Dialog } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 interface Lab {
   _id: string;
@@ -40,7 +42,7 @@ interface Department {
 
 @Component({
   selector: 'app-labs',
-  imports: [CommonModule, FormsModule, Button, InputText, Select, Dialog, Textarea],
+  imports: [CommonModule, FormsModule, Button, InputText, Select, Dialog, Textarea, TableModule, ButtonModule],
   templateUrl: './labs.html',
   styleUrl: './labs.scss'
 })
@@ -112,6 +114,7 @@ export class Labs implements OnInit {
   selectedDepartment: string = '';
   selectedStatus: string = '';
   showAddDialog: boolean = false;
+  viewMode: 'card' | 'table' = 'card';
 
   ngOnInit(): void {
     console.log('Labs component initialized');

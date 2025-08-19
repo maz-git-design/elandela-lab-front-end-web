@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { RouterModule } from '@angular/router';
+import { ChartModule } from 'primeng/chart';
+import { UserService } from '../../../core/services/user.service';
+import { AdminDashboard } from './admin-dashboard';
+import { TeacherDashboard } from './teacher-dashboard';
+import { StudentDashboard } from './student-dashboard';
 
 interface DashboardStats {
   totalLabs: number;
@@ -25,58 +30,47 @@ interface LabUsage {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, Button, RouterModule],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss'
+  imports: [CommonModule, Button, RouterModule, ChartModule, AdminDashboard, TeacherDashboard, StudentDashboard],
+  template: `
+    <div class="w-full">
+      <!-- Role Selection for Testing -->
+      <div class="p-4 bg-blue-50 border-b border-blue-200" *ngIf="!currentUser">
+        <p class="text-sm text-blue-800 mb-2">Sélectionnez un rôle pour tester:</p>
+        <div class="flex gap-2">
+          <p-button label="Admin" size="small" (onClick)="setRole('admin')"></p-button>
+          <p-button label="Enseignant" size="small" (onClick)="setRole('teacher')"></p-button>
+          <p-button label="Étudiant" size="small" (onClick)="setRole('student')"></p-button>
+        </div>
+      </div>
+
+      <!-- Role-specific Dashboard -->
+      <app-admin-dashboard *ngIf="userRole === 'admin'"></app-admin-dashboard>
+      <app-teacher-dashboard *ngIf="userRole === 'teacher'"></app-teacher-dashboard>
+      <app-student-dashboard *ngIf="userRole === 'student'"></app-student-dashboard>
+      
+      <!-- Default message if no role -->
+      <div class="p-8 text-center" *ngIf="!userRole">
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Bienvenue sur Elandela Lab</h2>
+        <p class="text-gray-600">Veuillez vous connecter pour accéder à votre dashboard.</p>
+      </div>
+    </div>
+  `,
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  stats: DashboardStats = {
-    totalLabs: 12,
-    activeUsers: 156,
-    totalEquipments: 89,
-    todayAttendance: 45
-  };
+  currentUser: any = null;
+  userRole: string | null = null;
 
-  recentActivities: RecentActivity[] = [
-    {
-      title: 'Nouveau laboratoire créé',
-      description: 'Lab de Chimie Organique ajouté',
-      time: 'Il y a 2h',
-      icon: 'fas fa-flask'
-    },
-    {
-      title: 'Utilisateur connecté',
-      description: 'Marie Dubois s\'est connectée',
-      time: 'Il y a 3h',
-      icon: 'fas fa-user'
-    },
-    {
-      title: 'Équipement mis à jour',
-      description: 'Microscope #MS-001 maintenance terminée',
-      time: 'Il y a 5h',
-      icon: 'fas fa-wrench'
-    },
-    {
-      title: 'Réservation confirmée',
-      description: 'Lab de Physique réservé pour demain',
-      time: 'Il y a 1j',
-      icon: 'fas fa-calendar-check'
-    }
-  ];
-
-  labUsage: LabUsage[] = [
-    { name: 'Lab Chimie', usage: 85, color: '#3B82F6' },
-    { name: 'Lab Physique', usage: 72, color: '#10B981' },
-    { name: 'Lab Biologie', usage: 68, color: '#F59E0B' },
-    { name: 'Lab Informatique', usage: 91, color: '#EF4444' },
-    { name: 'Lab Électronique', usage: 45, color: '#8B5CF6' }
-  ];
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.loadDashboardData();
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.userRole = user?.role || null;
+    });
   }
 
-  private loadDashboardData(): void {
-    console.log('Loading dashboard data...');
+  setRole(role: 'admin' | 'teacher' | 'student'): void {
+    this.userService.mockLogin(role);
   }
 }

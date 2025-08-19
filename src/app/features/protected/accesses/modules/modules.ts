@@ -7,6 +7,8 @@ import { Dialog } from 'primeng/dialog';
 import { Tooltip } from 'primeng/tooltip';
 import { Textarea } from 'primeng/textarea';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 interface Module {
   _id: string;
@@ -21,7 +23,7 @@ interface Module {
 
 @Component({
   selector: 'app-modules',
-  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Tooltip, Textarea, Select],
+  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Tooltip, Textarea, Select, TableModule, ButtonModule],
   templateUrl: './modules.html',
   styleUrl: './modules.scss'
 })
@@ -79,6 +81,7 @@ export class Modules implements OnInit {
   availableActionsList = ['Create', 'Update', 'Delete', 'List', '*'];
   searchTerm: string = '';
   showAddDialog: boolean = false;
+  viewMode: 'card' | 'table' = 'card';
 
   ngOnInit(): void {
     console.log('Modules component initialized');

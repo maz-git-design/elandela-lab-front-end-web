@@ -62,9 +62,11 @@
   </div>
 
   <!-- Users Table -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" style="overflow: visible;">
     <p-table [value]="filteredUsers" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" 
-             currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} utilisateurs">
+             [rowsPerPageOptions]="[5, 10, 20, 50]" 
+             currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} utilisateurs"
+             styleClass="p-datatable-paginator-dropdown-append">
       <ng-template pTemplate="header">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

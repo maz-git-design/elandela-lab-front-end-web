@@ -1,0 +1,17 @@
+// Fix paginator dropdown z-index and overflow issues
+::ng-deep .p-datatable-paginator-dropdown-append {
+  .p-paginator {
+    .p-dropdown {
+      z-index: 1000;
+    }
+    
+    .p-dropdown-panel {
+      z-index: 1001 !important;
+    }
+  }
+}
+
+::ng-deep .p-datatable .p-paginator-bottom {
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}

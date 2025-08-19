@@ -5,6 +5,8 @@ import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 interface AcademicYear {
   _id: string;
@@ -17,7 +19,7 @@ interface AcademicYear {
 
 @Component({
   selector: 'app-academic-years',
-  imports: [CommonModule, FormsModule, Button, Dialog, InputText, Select],
+  imports: [CommonModule, FormsModule, Button, Dialog, InputText, Select, TableModule, ButtonModule],
   templateUrl: './academic-years.html',
   styleUrl: './academic-years.scss'
 })
@@ -56,6 +58,7 @@ export class AcademicYears implements OnInit {
   ];
 
   showAddDialog: boolean = false;
+  viewMode: 'card' | 'table' = 'card';
 
   ngOnInit(): void {
     console.log('Academic Years component initialized');

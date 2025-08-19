@@ -1,0 +1,195 @@
+// Profile page custom styles
+.profile-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+// Enhanced card shadows
+:host ::ng-deep .p-card {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Progress bar styling
+:host ::ng-deep .p-progressbar {
+  .p-progressbar-value {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+  }
+}
+
+// Form input enhancements
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-select,
+:host ::ng-deep .p-datepicker,
+:host ::ng-deep .p-inputtextarea {
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+}
+
+// Button enhancements
+:host ::ng-deep .p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  
+  &.p-button-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    
+    &:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.p-button-secondary {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    
+    &:hover {
+      background: #edf2f7;
+      border-color: #cbd5e0;
+    }
+  }
+}
+
+// Dialog enhancements
+:host ::ng-deep .p-dialog {
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  
+  .p-dialog-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 1.5rem;
+    
+    .p-dialog-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 2rem;
+  }
+}
+
+// Steps component styling
+:host ::ng-deep .p-steps {
+  .p-steps-item {
+    .p-steps-number {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    
+    &.p-highlight .p-steps-number {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+  }
+}
+
+// Video element styling
+video {
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+// Password strength indicator
+:host ::ng-deep .p-password {
+  .p-password-meter {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+}
+
+// Toast styling
+:host ::ng-deep .p-toast {
+  .p-toast-message {
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    
+    &.p-toast-message-success {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+    
+    &.p-toast-message-error {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+  
+  :host ::ng-deep .p-dialog {
+    margin: 1rem;
+    width: calc(100vw - 2rem);
+    max-width: none;
+  }
+}
+
+// Animation for face detection guide
+.face-guide {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 250px;
+    border: 3px dashed rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Security section styling
+.security-section {
+  background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #9ae6b4;
+}

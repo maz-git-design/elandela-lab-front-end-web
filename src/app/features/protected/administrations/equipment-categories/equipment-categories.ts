@@ -5,6 +5,8 @@ import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Dialog } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 interface EquipmentCategory {
   _id: string;
@@ -17,7 +19,7 @@ interface EquipmentCategory {
 
 @Component({
   selector: 'app-equipment-categories',
-  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Textarea],
+  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Textarea, TableModule, ButtonModule],
   templateUrl: './equipment-categories.html',
   styleUrl: './equipment-categories.scss'
 })
@@ -75,6 +77,7 @@ export class EquipmentCategories implements OnInit {
 
   searchTerm: string = '';
   showAddDialog: boolean = false;
+  viewMode: 'card' | 'table' = 'card';
 
   ngOnInit(): void {
     console.log('Equipment Categories component initialized');

@@ -1,44 +1,41 @@
 <div
   class="bg-white h-full flex flex-col border-gray-200 border-r shadow-sm transition-all duration-300 relative z-10"
   [class.w-80]="!collapsed"
-  [class.w-16]="collapsed"
+  [class.w-20]="collapsed"
   [class.p-4]="!collapsed"
   [class.p-2]="collapsed"
 >
-  <div class="mb-4" [class.h-20]="!collapsed" [class.h-16]="collapsed">
-    <img 
-      *ngIf="!collapsed" 
-      src="logo/elandelalab-logo.png" 
-      alt="logo" 
-      class="h-11" 
-    />
-    <div 
-      *ngIf="collapsed" 
-      class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mx-auto"
-    >
-      E
+  <div class="py-4">
+    <div *ngIf="!collapsed" class="flex items-center justify-between">
+      <img src="logo/elandelalab-logo.png" alt="ElandelaLab" class="h-11" />
+      <img src="logo/elogo-unikin.png" alt="UNIKIN" class="h-11" />
     </div>
-    <p-divider class="h-0 mt-2"></p-divider>
+    <img 
+      *ngIf="collapsed" 
+      src="logo/elandela-minilogo2.png" 
+      alt="ElandelaLab" 
+      class="h-14 w-14 mx-auto object-contain"
+    />
   </div>
-  <p-button
-    *ngIf="!collapsed"
-    label="Nouveau"
-    icon="pi pi-plus"
-    variant="outlined"
-    class="w-full"
-    styleClass="w-full"
-  ></p-button>
-  <p-button
-    *ngIf="collapsed"
-    icon="pi pi-plus"
-    variant="outlined"
-    class="w-full"
-    styleClass="w-full justify-center"
-    pTooltip="Nouveau"
-    tooltipPosition="right"
-  ></p-button>
-  <div class="flex flex-col w-full mt-4 justify-between h-full">
-    <div class="w-full">
+  <div class="mt-4">
+    <p-button
+      *ngIf="!collapsed"
+      label="Nouvelle Réservation"
+      icon="fas fa-plus"
+      class="w-full"
+      styleClass="w-full bg-gradient-to-r from-blue-500 to-indigo-600 border-0 text-white hover:from-blue-600 hover:to-indigo-700"
+    ></p-button>
+    <p-button
+      *ngIf="collapsed"
+      icon="fas fa-plus"
+      class="w-full"
+      styleClass="w-full justify-center bg-gradient-to-r from-blue-500 to-indigo-600 border-0 text-white hover:from-blue-600 hover:to-indigo-700"
+      pTooltip="Nouvelle Réservation"
+      tooltipPosition="right"
+    ></p-button>
+  </div>
+  <div class="flex flex-col w-full mt-4 justify-between h-full overflow-hidden">
+    <div class="w-full flex-1 overflow-y-auto">
       <p-panelmenu [model]="menus()" class="border-0 gap-0 overflow-visible" [multiple]="false">
         <ng-template #item let-item>
           <a
@@ -50,7 +47,7 @@
             [class.justify-center]="collapsed"
             [ngClass]="{ 'bg-blue-50': isCurrentItem(item) }"
             [id]="item.id"
-            [pTooltip]="collapsed ? item.label : ''"
+            [pTooltip]="getTooltipText(item)"
             [tooltipPosition]="'right'"
           >
             <i
@@ -83,7 +80,7 @@
     </div>
     <div class="ici">
       <a
-        class="pRipple w-full flex items-center cursor-pointer bg-gray-100 group hover:bg-gray-200 hover:rounded-md rounded-md"
+        class="pRipple w-full flex items-center cursor-pointer bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 group hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 rounded-md transition-all duration-200"
         [class.px-4]="!collapsed"
         [class.py-4]="!collapsed"
         [class.px-2]="collapsed"
@@ -91,48 +88,56 @@
         [class.justify-center]="collapsed"
         id="id"
         (click)="toggle($event)"
-        [pTooltip]="collapsed ? 'Lionnel Mazuba' : ''"
+        [pTooltip]="collapsed ? 'Lionnel Mazuba - Administrateur' : ''"
         [tooltipPosition]="'right'"
       >
-        <i
-          class="fas fa-circle-user text-2xl"
-          [ngClass]="{
-                'text-blue-600': false,
-                'text-gray-600': true
-              }"
-        ></i>
-        <div *ngIf="!collapsed" class="flex flex-col items-start justify-start">
-          <span
-            class="ml-2 text-sm w-full"
-            [ngClass]="{
-                'text-blue-600 font-bold': false,
-                'text-gray-600 font-semibold': true
-              }"
-          >
+        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+          LM
+        </div>
+        <div *ngIf="!collapsed" class="flex flex-col items-start justify-start ml-3 min-w-0 flex-1">
+          <span class="text-sm font-semibold text-gray-800 truncate w-full">
             Lionnel Mazuba
           </span>
-          <span class="ml-2 text-xs text-gray-500">Admin</span>
+          <span class="text-xs text-blue-600 font-medium">Administrateur</span>
         </div>
+        <i *ngIf="!collapsed" class="fas fa-chevron-down text-gray-400 text-xs ml-2 flex-shrink-0 group-hover:text-blue-500 transition-colors"></i>
       </a>
       <p-popover #op>
-        <div class="flex flex-col min-w-48 p-0 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <div>
-            <ul class="list-none p-0 m-0 flex flex-col">
+        <div class="w-72 p-0 bg-white rounded-xl overflow-hidden">
+          <!-- User Info Header -->
+          <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                LM
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 truncate">Lionnel Mazuba</p>
+                <p class="text-xs text-blue-600 font-medium">Administrateur</p>
+                <p class="text-xs text-gray-500 truncate">lionnel.mazuba@university.edu</p>
+              </div>
+            </div>
+          </div>
+          <!-- Menu Items -->
+          <div class="p-2">
+            <ul class="list-none p-0 m-0 space-y-1">
               <li
                 *ngFor="let item of [
-                { label: 'Mon profile', separator: false, icon: 'fas fa-user', route: ['/protected/profile'] },
-                { label: 'Paramètres', separator:false, icon: 'fas fa-cog', route: ['/protected/settings'] },
-                { label: 'Déconnexion', separator: true, icon: 'fas fa-arrow-right-from-bracket', route: ['/auth/login'] }
+                { label: 'Mon Profil', separator: false, icon: 'fas fa-user', route: ['/protected/profile'] },
+                { label: 'Paramètres', separator: false, icon: 'fas fa-cog', route: ['/protected/settings'] },
+                { label: 'Notifications', separator: false, icon: 'fas fa-bell', route: ['/protected/notifications'] },
+                { label: 'Aide & Support', separator: false, icon: 'fas fa-question-circle', route: ['/protected/help'] },
+                { label: 'Déconnexion', separator: true, icon: 'fas fa-sign-out-alt', route: ['/auth/login'], danger: true }
               ]"
               >
-                @if(item.separator) {
-                <p-divider class="h-0"></p-divider>
-                }
+                <p-divider *ngIf="item.separator" class="my-2"></p-divider>
                 <div
-                  class="flex items-center gap-2 p-3 hover:bg-gray-100 cursor-pointer rounded-md"
+                  class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer rounded-lg transition-all duration-150"
+                  [class.text-red-600]="item.danger"
+                  [class.hover:bg-red-50]="item.danger"
+                  (click)="navigateToRoute(item.route)"
                 >
-                  <i class="{{ item.icon }} "></i>
-                  <span class="">{{ item.label }}</span>
+                  <i class="{{ item.icon }} w-4 text-center" [class.text-red-600]="item.danger"></i>
+                  <span class="text-sm font-medium" [class.text-red-600]="item.danger">{{ item.label }}</span>
                 </div>
               </li>
             </ul>

@@ -61,13 +61,16 @@
   <!-- Activities Table -->
   <div
     class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+    style="overflow: visible;"
   >
     <p-table
       [value]="filteredActivities"
       [paginator]="true"
       [rows]="10"
       [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
       currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} activités"
+      styleClass="p-datatable-paginator-dropdown-append"
     >
       <ng-template pTemplate="header">
         <tr>

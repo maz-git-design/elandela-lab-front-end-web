@@ -154,6 +154,31 @@ export class Topbar implements OnInit {
       ];
     } else if (url.includes('/accesses')) {
       this.breadcrumbItems = [{ label: 'Gestion des accès' }];
+    } else if (url.includes('/administrations/departments')) {
+      this.breadcrumbItems = [
+        { label: 'Administration', routerLink: '/protected/administrations' },
+        { label: 'Départements' }
+      ];
+    } else if (url.includes('/administrations/cohorts')) {
+      this.breadcrumbItems = [
+        { label: 'Administration', routerLink: '/protected/administrations' },
+        { label: 'Cohortes' }
+      ];
+    } else if (url.includes('/administrations/equipment-categories')) {
+      this.breadcrumbItems = [
+        { label: 'Administration', routerLink: '/protected/administrations' },
+        { label: 'Catégories d\'équipement' }
+      ];
+    } else if (url.includes('/administrations/activities')) {
+      this.breadcrumbItems = [
+        { label: 'Administration', routerLink: '/protected/administrations' },
+        { label: 'Activités' }
+      ];
+    } else if (url.includes('/administrations/academic-years')) {
+      this.breadcrumbItems = [
+        { label: 'Administration', routerLink: '/protected/administrations' },
+        { label: 'Années académiques' }
+      ];
     } else if (url.includes('/administrations')) {
       this.breadcrumbItems = [{ label: 'Administration' }];
     }

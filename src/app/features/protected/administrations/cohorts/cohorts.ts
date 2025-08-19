@@ -6,6 +6,8 @@ import { InputText } from 'primeng/inputtext';
 import { Dialog } from 'primeng/dialog';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 interface Cohort {
   _id: string;
@@ -19,7 +21,7 @@ interface Cohort {
 
 @Component({
   selector: 'app-cohorts',
-  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Select, Textarea],
+  imports: [CommonModule, FormsModule, Button, InputText, Dialog, Select, Textarea, TableModule, ButtonModule],
   templateUrl: './cohorts.html',
   styleUrl: './cohorts.scss'
 })
@@ -71,6 +73,7 @@ export class Cohorts implements OnInit {
   selectedDepartment: string = '';
   selectedAcademicYear: string = '';
   showAddDialog: boolean = false;
+  viewMode: 'card' | 'table' = 'card';
 
   ngOnInit(): void {
     console.log('Cohorts component initialized');

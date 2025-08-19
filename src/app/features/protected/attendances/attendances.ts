@@ -111,6 +111,10 @@ export class Attendances implements OnInit, OnDestroy {
   recognitionResult: string = '';
   faceDetected: boolean = false;
   scanningInterval: any;
+  availableCameras: { label: string; deviceId: string }[] = [];
+  selectedCameraId: string = '';
+  recognizedUser: any = null;
+  attendanceConfirmed: boolean = false;
   
   // Mock face database
   faceDatabase = [
@@ -122,6 +126,7 @@ export class Attendances implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('Attendances component initialized');
+    this.loadAvailableCameras();
   }
 
   ngOnDestroy(): void {
@@ -171,17 +176,53 @@ export class Attendances implements OnInit, OnDestroy {
   }
 
   // Face Recognition Methods
+  async loadAvailableCameras(): Promise<void> {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      this.availableCameras = devices
+        .filter(device => device.kind === 'videoinput')
+        .map((device, index) => ({
+          label: device.label || `Caméra ${index + 1}`,
+          deviceId: device.deviceId
+        }));
+      
+      if (this.availableCameras.length > 0) {
+        this.selectedCameraId = this.availableCameras[0].deviceId;
+      }
+    } catch (error) {
+      console.error('Error loading cameras:', error);
+    }
+  }
+
   async startFaceRecognition(): Promise<void> {
     this.showFaceRecognitionDialog = true;
+    this.resetRecognitionState();
+    await this.startCamera();
+  }
+
+  resetRecognitionState(): void {
+    this.isScanning = false;
+    this.faceDetected = false;
+    this.recognitionResult = '';
+    this.recognizedUser = null;
+    this.attendanceConfirmed = false;
+  }
+
+  async startCamera(): Promise<void> {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { width: 640, height: 480 } 
-      });
+      const constraints = {
+        video: {
+          deviceId: this.selectedCameraId ? { exact: this.selectedCameraId } : undefined,
+          width: 640,
+          height: 480
+        }
+      };
+      
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       setTimeout(() => {
         if (this.videoElement?.nativeElement) {
           this.videoElement.nativeElement.srcObject = this.stream;
-          this.startScanning();
         }
       }, 100);
     } catch (error) {
@@ -190,8 +231,17 @@ export class Attendances implements OnInit, OnDestroy {
     }
   }
 
+  async switchCamera(deviceId: string): Promise<void> {
+    this.selectedCameraId = deviceId;
+    this.stopCamera();
+    await this.startCamera();
+  }
+
   startScanning(): void {
     this.isScanning = true;
+    this.faceDetected = false;
+    this.recognizedUser = null;
+    this.attendanceConfirmed = false;
     this.recognitionResult = 'Recherche de visage...';
     
     this.scanningInterval = setInterval(() => {
@@ -217,35 +267,38 @@ export class Attendances implements OnInit, OnDestroy {
     // Simulate face recognition
     const randomUser = this.faceDatabase[Math.floor(Math.random() * this.faceDatabase.length)];
     
+    this.recognizedUser = randomUser;
     this.recognitionResult = `Utilisateur reconnu: ${randomUser.name}`;
-    this.autoMarkAttendance(randomUser.userId, randomUser.name);
-    
-    setTimeout(() => {
-      this.stopScanning();
-    }, 2000);
+    this.stopScanning();
   }
 
-  autoMarkAttendance(userId: string, userName: string): void {
+  confirmAttendance(): void {
+    if (!this.recognizedUser) return;
+    
     const newAttendance: Attendance = {
       _id: Date.now().toString(),
       reservationId: 'res1',
-      userId: userId,
+      userId: this.recognizedUser.userId,
       status: 'present',
       confirmedAt: new Date(),
       confirmedBy: 'face_recognition',
-      comments: `Présence confirmée automatiquement par reconnaissance faciale - ${userName}`,
+      comments: `Présence confirmée par reconnaissance faciale - ${this.recognizedUser.name}`,
       createdAt: new Date(),
       updatedAt: new Date()
     };
     
     this.attendances.unshift(newAttendance);
-    console.log('Auto-attendance marked:', newAttendance);
+    this.attendanceConfirmed = true;
+    this.recognitionResult = `Présence confirmée pour ${this.recognizedUser.name}`;
+    
+    console.log('Attendance confirmed:', newAttendance);
   }
 
   stopScanning(): void {
     this.isScanning = false;
     if (this.scanningInterval) {
       clearInterval(this.scanningInterval);
+      this.scanningInterval = null;
     }
   }
 
@@ -260,7 +313,6 @@ export class Attendances implements OnInit, OnDestroy {
   closeFaceRecognition(): void {
     this.stopCamera();
     this.showFaceRecognitionDialog = false;
-    this.faceDetected = false;
-    this.recognitionResult = '';
+    this.resetRecognitionState();
   }
 }

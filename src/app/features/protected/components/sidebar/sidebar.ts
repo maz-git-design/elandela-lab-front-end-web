@@ -8,6 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { Divider } from 'primeng/divider';
 import { Button } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
@@ -37,6 +38,7 @@ import { Tooltip } from 'primeng/tooltip';
 })
 export class Sidebar implements OnInit {
   private readonly menuStore = inject(MenuStore);
+  private readonly router = inject(Router);
 
   readonly menus = this.menuStore.menus;
   readonly currentItem = this.menuStore.selectedMenu;
@@ -152,5 +154,21 @@ export class Sidebar implements OnInit {
 
   private areAllItemsExpanded(): boolean {
     return this.items.every((menuItem) => menuItem.expanded);
+  }
+
+  getTooltipText(item: MenuItem): string {
+    if (!this.collapsed) return '';
+    
+    if (item.items && item.items.length > 0) {
+      const subLabels = item.items.map(sub => sub.label).join(', ');
+      return `${item.label} - ${subLabels}`;
+    }
+    
+    return item.label || '';
+  }
+
+  navigateToRoute(route: string[]) {
+    this.router.navigate(route);
+    this.op.hide();
   }
 }
