@@ -17,10 +17,18 @@ export const authRoutes: Routes = [
             (c) => c.ResetPassword
           ),
       },
+
       {
-        path: 'login/set-password',
+        path: 'set-password',
         loadComponent: () =>
           import('./set-password/set-password').then((c) => c.SetPassword),
+      },
+      {
+        path: 'face-registration',
+        loadComponent: () =>
+          import('./face-registration/face-registration').then(
+            (c) => c.FaceRegistration
+          ),
       },
       {
         path: 'login/verify',

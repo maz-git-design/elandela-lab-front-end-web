@@ -2,9 +2,6 @@
   <div class="text-center mb-8">
     <div class="flex items-center justify-center mb-4">
       <div class="relative">
-        <!-- <div
-          class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 animate-pulse"
-        ></div> -->
         <img
           src="logo/logo-elab.png"
           alt="E-Landela Lab"
@@ -13,48 +10,39 @@
         />
       </div>
     </div>
-
-    <div class="mb-6">
-      <h1
-        class="text-xl font-medium bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent mb-2 whitespace-nowrap"
-      >
-        Bienvenue sur e-Landela Lab
-      </h1>
+    <p-divider></p-divider>
+    <div class="mb-6 mt-6">
       <p class="text-gray-600 text-sm">
-        Connectez-vous pour accéder à votre laboratoire
+        Connectez-vous pour accéder à l'application
       </p>
     </div>
   </div>
 
   <div [formGroup]="loginForm">
     <div class="mb-4">
-      <label
-        for="email"
-        class="flex text-gray-700 font-medium mb-2 gap-2 items-center"
-      >
-        <i class="fas fa-user text-blue-500"></i>
+      <label for="email" class="flex font-medium mb-2 gap-2 items-center">
         {{ "Nom d'utilisateur" }}</label
       >
       <div class="relative">
-        <input
-          id="email"
-          type="text"
-          pInputText
-          placeholder="Entrez votre nom d'utilisateur"
-          formControlName="email"
-          [ngClass]="{ 'ng-invalid ng-dirty': email?.invalid }"
-          class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-        />
-        <i
-          class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-        ></i>
+        <p-iconfield>
+          <p-inputicon class="fas fa-user text-base"> </p-inputicon>
+          <input
+            id="email"
+            type="text"
+            pInputText
+            placeholder="Entrez votre nom d'utilisateur"
+            formControlName="email"
+            [ngClass]="{ 'ng-invalid ng-dirty': email?.invalid }"
+            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          />
+        </p-iconfield>
       </div>
       @if(email?.touched) {
-      <div>
+      <div class="mt-1">
         <small
           class="p-error block text-red-500"
           *ngIf="email?.errors?.['required']"
-          >{{ "emailRequired" }}</small
+          >{{ "Email est requis" }}</small
         >
         <small
           class="p-error block text-red-500"
@@ -66,11 +54,7 @@
     </div>
 
     <div class="mb-6">
-      <label
-        for="password"
-        class="flex text-gray-700 font-medium mb-2 gap-2 items-center"
-      >
-        <i class="fas fa-lock text-blue-500"></i>
+      <label for="password" class="flex font-medium mb-2 gap-2 items-center">
         {{ "Mot de passe" }}</label
       >
       <div class="relative">
@@ -93,7 +77,7 @@
         >
         </p-password>
         <i
-          class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"
+          class="fas fa-lock text-base absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"
         ></i>
       </div>
       @if(password?.touched) {
@@ -102,13 +86,13 @@
           class="p-error block text-red-500"
           *ngIf="password?.errors?.['required']"
         >
-          {{ "passwordRequired" }}</small
+          {{ "Mot de passe est requis" }}</small
         >
         <small
           class="p-error block text-red-500"
           *ngIf="password?.errors?.['pattern']"
         >
-          {{ "passwordWeak" }}
+          {{ "Mot de passe faible" }}
         </small>
       </div>
       }
@@ -120,7 +104,7 @@
           id="rememberMe"
           [binary]="true"
           formControlName="rememberMe"
-          styleClass="mr-2"
+          class="mr-2"
           (onChange)="onRememberMeChange($event)"
         ></p-checkbox>
         <label for="rememberMe" class="text-sm text-gray-600 cursor-pointer"
@@ -131,7 +115,7 @@
         [label]="'Mot de passe oublié ?' "
         [link]="true"
         id="forgotpassword"
-        routerLink="/auth/reset-password"
+        (onClick)="goToForgotPassword()"
         styleClass="text-blue-600 hover:text-blue-800 text-sm font-medium"
       />
     </div>
@@ -140,8 +124,8 @@
       pRipple
       id="login-submit-button"
       [label]="'Se connecter' "
-      styleClass="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-purple-700 border-0 rounded-lg font-semibold text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-      [loading]="loading"
+      styleClass="w-full py-3    font-semibold text-white "
+[loading]="vm.loading()"
       [disabled]="loginForm.invalid"
       (onClick)="signin()"
     />

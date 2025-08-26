@@ -14,11 +14,12 @@ export interface User {
   faceData?: string;
   profileCompletion?: number;
   dateOfBirth?: string;
+  isFirstLogin?: boolean;
   address?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -55,17 +56,28 @@ export class UserService {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
       const updatedUser = { ...currentUser, ...updates };
-      updatedUser.profileCompletion = this.calculateProfileCompletion(updatedUser);
+      updatedUser.profileCompletion =
+        this.calculateProfileCompletion(updatedUser);
       this.setCurrentUser(updatedUser);
     }
   }
 
   private calculateProfileCompletion(user: User): number {
-    const fields = ['name', 'email', 'phone', 'department', 'dateOfBirth', 'address'];
-    const roleSpecificFields = user.role === 'student' ? ['studentId'] : ['employeeId'];
+    const fields = [
+      'name',
+      'email',
+      'phone',
+      'department',
+      'dateOfBirth',
+      'address',
+    ];
+    const roleSpecificFields =
+      user.role === 'student' ? ['studentId'] : ['employeeId'];
     const allFields = [...fields, ...roleSpecificFields, 'faceData'];
-    
-    const completedFields = allFields.filter(field => user[field as keyof User]);
+
+    const completedFields = allFields.filter(
+      (field) => user[field as keyof User]
+    );
     return Math.round((completedFields.length / allFields.length) * 100);
   }
 
@@ -73,10 +85,15 @@ export class UserService {
   mockLogin(role: 'admin' | 'teacher' | 'student'): void {
     const mockUser: User = {
       id: '1',
-      name: role === 'admin' ? 'Admin User' : role === 'teacher' ? 'Teacher User' : 'Student User',
+      name:
+        role === 'admin'
+          ? 'Admin User'
+          : role === 'teacher'
+          ? 'Teacher User'
+          : 'Student User',
       email: `${role}@elandela.com`,
       role: role,
-      profileCompletion: 30
+      profileCompletion: 30,
     };
     this.setCurrentUser(mockUser);
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -14,6 +14,9 @@ import { Checkbox } from 'primeng/checkbox';
 import { Divider } from 'primeng/divider';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { useLoginViewModel } from './view-models/login.view-model';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +28,8 @@ import { Password } from 'primeng/password';
     CommonModule,
     ReactiveFormsModule,
     Checkbox,
+    IconField,
+    InputIcon,
     Button,
     FormsModule,
   ],
@@ -33,18 +38,9 @@ import { Password } from 'primeng/password';
 })
 export class Login {
   private readonly router = inject(Router);
+  readonly vm = useLoginViewModel();
 
-  ngOnInit(): void {
-    const email = localStorage.getItem('email');
-    const rememberMe = localStorage.getItem('rememberMe');
-
-    this.loginForm.patchValue({
-      email,
-      rememberMe: rememberMe === 'true',
-    });
-  }
-
-  loginForm: FormGroup = new FormGroup({
+  loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
       Validators.required,
@@ -52,10 +48,21 @@ export class Login {
     ]),
     rememberMe: new FormControl(true),
   });
-  loading: boolean = false;
-  captcha: string = '';
-  _email: string = '';
-  _password: string = '';
+
+  constructor() {
+    effect(() => {
+      const user = this.vm.user();
+      if (user) {
+        if (user.isFirstLogin) {
+          this.router.navigate(['/auth/set-password']);
+        } else if (!user.faceData) {
+          this.router.navigate(['/auth/face-registration']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+      }
+    });
+  }
 
   get email() {
     return this.loginForm.get('email');
@@ -65,40 +72,28 @@ export class Login {
     return this.loginForm.get('password');
   }
 
-  async signin() {}
-
-  private goToOTPPage(): void {
-    this.router.navigate(['/auth/otp']);
-  }
-
-  checkError = (controlName: string, errorName: string) => {
-    return this.loginForm.controls[controlName].hasError(errorName);
-  };
-
-  resolved(captchaResponse: any): void {
-    this.loading = true;
-    this.captcha = captchaResponse;
-    this.signin();
+  signin() {
+    if (this.loginForm.valid) {
+      const { email, password, rememberMe } = this.loginForm.value;
+      this.vm.login({
+        email: email!,
+        password: password!,
+        rememberMe: rememberMe!,
+      });
+    }
   }
 
   onRememberMeChange(event: any) {
     if (event.checked) {
       localStorage.setItem('rememberMe', 'true');
-      localStorage.setItem('email', this.loginForm.get('email')!.value);
+      localStorage.setItem('email', this.loginForm.get('email')!.value!);
     } else {
       localStorage.setItem('rememberMe', 'false');
       localStorage.removeItem('email');
     }
   }
 
-  quickLogin(role: 'admin' | 'teacher' | 'student') {
-    const credentials = {
-      admin: { email: 'admin@elandela.com', password: 'admin123456' },
-      teacher: { email: 'teacher@elandela.com', password: 'teacher123456' },
-      student: { email: 'student@elandela.com', password: 'student123456' }
-    };
-    
-    this.loginForm.patchValue(credentials[role]);
-    this.signin();
+  goToForgotPassword() {
+    this.router.navigate(['/auth/reset-password']);
   }
 }
