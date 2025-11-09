@@ -1,3 +1,5 @@
+import { User } from '../../../../core/services/user.service';
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -7,14 +9,4 @@ export interface LoginRequest {
 export interface LoginResponse {
   user: User;
   success: boolean;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  role: 'admin' | 'teacher' | 'student';
-  isFirstLogin: boolean;
-  faceData?: string;
-  profileCompletion: number;
 }

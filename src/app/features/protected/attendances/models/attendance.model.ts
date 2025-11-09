@@ -1,19 +1,19 @@
 export interface Attendance {
   id: string;
   userId: string;
-  userName: string;
-  userEmail: string;
+  userName?: string;
+  userEmail?: string;
   sessionId: string;
-  sessionName: string;
-  labId: string;
-  labName: string;
-  checkInTime: Date;
-  checkOutTime?: Date;
-  status: 'present' | 'absent' | 'late' | 'excused';
+  sessionName?: string;
+  labId?: string;
+  labName?: string;
+  checkIn?: Date;
+  checkOut?: Date;
+  status?: 'present' | 'absent' | 'late' | 'excused';
   duration?: number;
-  faceVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  faceVerified?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface AttendanceSession {

@@ -1,22 +1,22 @@
-export interface Permission {
+export interface EquipmentCategory {
   id: string;
   name: string;
   description?: string;
-  actions: string[];
+  imagePath?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface CreatePermissionRequest {
+export interface CreateEquipmentCategoryRequest {
   name: string;
   description?: string;
-  actions: string[];
+  imagePath?: string;
 }
 
-export interface UpdatePermissionRequest {
+export interface UpdateEquipmentCategoryRequest {
   id: string;
   name?: string;
   description?: string;
-  actions?: string[];
+  imagePath?: string;
 }

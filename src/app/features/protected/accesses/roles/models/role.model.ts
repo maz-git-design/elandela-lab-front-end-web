@@ -1,8 +1,11 @@
 export interface Role {
   id: string;
   name: string;
-  description: string;
-  permissions: string[];
+  description?: string;
+  permissionsByModule: {
+    moduleId: string;
+    permissions: string[];
+  }[];
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -10,11 +13,19 @@ export interface Role {
 
 export interface CreateRoleRequest {
   name: string;
-  description: string;
-  permissions: string[];
+  description?: string;
+  permissionsByModule?: {
+    moduleId: string;
+    permissions: string[];
+  }[];
 }
 
-export interface UpdateRoleRequest extends CreateRoleRequest {
+export interface UpdateRoleRequest {
   id: string;
-  isActive: boolean;
+  name?: string;
+  description?: string;
+  permissionsByModule?: {
+    moduleId: string;
+    permissions: string[];
+  }[];
 }

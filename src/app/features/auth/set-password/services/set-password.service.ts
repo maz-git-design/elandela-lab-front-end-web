@@ -17,7 +17,7 @@ export class SetPasswordService {
     return this.http
       .post<any>('auth/set-password', {
         newPassword: request.newPassword,
-        confirmPassword: request.confirmPassword,
+        oldPassword: request.oldPassword,
       })
       .pipe(
         map(() => ({

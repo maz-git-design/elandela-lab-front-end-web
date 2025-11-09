@@ -13,7 +13,7 @@ export const routes: Routes = [
       import('./features/protected/proctected.routes').then(
         (routes) => routes.protectedRoutes
       ),
-    //canActivateChild: [AuthGuard]
+    canActivateChild: [() => import('./core/guards/protected.guard').then(g => g.ProtectedGuard)]
   },
   {
     path: 'public',

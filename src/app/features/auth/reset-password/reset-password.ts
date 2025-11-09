@@ -78,34 +78,6 @@ export class ResetPassword implements OnInit {
       : { passwordMismatch: true };
   }
 
-  onSubmit() {
-    if (this.resetForm.valid) {
-      this.isLoading = true;
-      const { password } = this.resetForm.value;
-
-      this.authService.resetPassword(this.token, password).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Succès',
-            detail: 'Mot de passe réinitialisé avec succès',
-          });
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 2000);
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erreur',
-            detail: 'Impossible de réinitialiser le mot de passe',
-          });
-          this.isLoading = false;
-        },
-      });
-    }
-  }
-
   goToLogin() {
     this.router.navigate(['/auth/login']);
   }

@@ -15,67 +15,52 @@ export class UserService {
   private readonly http = inject(HttpService);
 
   getUsers(): Observable<User[]> {
-    return this.http.get<any[]>('users').pipe(
-      map((users) =>
-        users.map((user) => ({
-          id: user._id,
-          email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
-          role: user.roles?.[0] || 'student',
-          department: user.department,
-          isActive: user.state === 'active',
-          createdAt: new Date(user.createdAt),
-        }))
-      )
-    );
+    return this.http
+      .get<any[]>('users')
+      .pipe(map((users) => users.map((user) => this.mapUserFromBackend(user))));
+  }
+
+  getUserById(id: string): Observable<User> {
+    return this.http
+      .get<any>(`users/${id}`)
+      .pipe(map((user) => this.mapUserFromBackend(user)));
   }
 
   createUser(request: CreateUserRequest): Observable<User> {
     return this.http
-      .post<any>('users', {
-        firstName: request.name.split(' ')[0],
-        lastName: request.name.split(' ').slice(1).join(' '),
-        email: request.email,
-        roles: [request.role],
-        department: request.department,
-      })
-      .pipe(
-        map((user) => ({
-          id: user._id,
-          email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
-          role: user.roles?.[0] || 'student',
-          department: user.department,
-          isActive: user.state === 'active',
-          createdAt: new Date(user.createdAt),
-        }))
-      );
+      .post<any>('users', request)
+      .pipe(map((user) => this.mapUserFromBackend(user)));
   }
 
   updateUser(request: UpdateUserRequest): Observable<User> {
     return this.http
-      .put<any>(`users/${request.id}`, {
-        firstName: request.name?.split(' ')[0],
-        lastName: request.name?.split(' ').slice(1).join(' '),
-        email: request.email,
-        roles: request.role ? [request.role] : undefined,
-        department: request.department,
-        state: request.isActive ? 'active' : 'inactive',
-      })
-      .pipe(
-        map((user) => ({
-          id: user._id,
-          email: user.email,
-          name: `${user.firstName} ${user.lastName}`,
-          role: user.roles?.[0] || 'student',
-          department: user.department,
-          isActive: user.state === 'active',
-          createdAt: new Date(user.createdAt),
-        }))
-      );
+      .put<any>(`users/${request.id}`, request)
+      .pipe(map((user) => this.mapUserFromBackend(user)));
   }
 
-  deleteUser(id: number): Observable<boolean> {
+  deleteUser(id: string): Observable<boolean> {
     return this.http.delete<any>(`users/${id}`).pipe(map(() => true));
+  }
+
+  private mapUserFromBackend(user: any): User {
+    return {
+      id: user._id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      gender: user.gender,
+      birthday: user.birthday ? new Date(user.birthday) : undefined,
+      roles: user.roles || [],
+      status: user.status || { state: 'pending', updatedAt: new Date() },
+      faceFingerprint: user.faceFingerprint,
+      cohortId: user.cohortId,
+      identificationNumber: user.identificationNumber,
+      mustSetNewPassword: user.mustSetNewPassword || false,
+      fromActiveDirectory: user.fromActiveDirectory || false,
+      createdAt: new Date(user.createdAt),
+      updatedAt: new Date(user.updatedAt),
+    };
   }
 }

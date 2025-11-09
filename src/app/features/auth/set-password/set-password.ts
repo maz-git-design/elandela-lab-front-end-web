@@ -25,8 +25,6 @@ import { useSetPasswordViewModel } from './view-models/set-password.view-model';
     Password,
     CommonModule,
     ReactiveFormsModule,
-    IconField,
-    InputIcon,
     Button,
     FormsModule,
   ],
@@ -65,10 +63,10 @@ export class SetPassword {
         const currentUser = JSON.parse(
           localStorage.getItem('currentUser') || '{}'
         );
-        if (!currentUser.faceData) {
+        if (!currentUser.faceFingerprint) {
           this.router.navigate(['/auth/face-registration']);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/protected/dashboard']);
         }
       }
     });

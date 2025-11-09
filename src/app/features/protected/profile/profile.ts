@@ -87,7 +87,7 @@ export class Profile implements OnInit {
     this.currentUser = this.userService.getCurrentUser();
     this.initForm();
     this.initPasswordForm();
-    this.faceRegistered = !!this.currentUser?.faceData;
+    this.faceRegistered = !!this.currentUser?.faceFingerprint;
     this.loadAvailableCameras();
   }
 
@@ -241,7 +241,7 @@ export class Profile implements OnInit {
       context.drawImage(video, 0, 0);
 
       const faceData = canvas.toDataURL('image/jpeg', 0.8);
-      this.userService.updateProfile({ faceData });
+      this.userService.updateProfile({ faceFingerprint: faceData });
       this.faceRegistered = true;
       this.activeStepIndex = 2;
 

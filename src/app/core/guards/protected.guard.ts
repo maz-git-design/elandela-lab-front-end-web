@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-export const AuthGuard: CanActivateFn = () => {
+export const ProtectedGuard: CanActivateFn = () => {
   const router = inject(Router);
   const currentUser = localStorage.getItem('currentUser');
   
@@ -11,17 +11,8 @@ export const AuthGuard: CanActivateFn = () => {
   }
 
   const user = JSON.parse(currentUser);
-  const currentUrl = router.url;
 
-  // Prevent access to protected pages during auth flows
-  const authPages = ['/auth/login', '/auth/set-password', '/auth/face-registration', '/auth/reset-password'];
-  const isOnAuthPage = authPages.some(page => currentUrl.includes(page));
-  
-  if (isOnAuthPage) {
-    return false;
-  }
-
-  // Check if user needs to complete auth flow
+  // Check if user needs to complete auth flow first
   if (user.mustSetNewPassword) {
     router.navigate(['/auth/set-password']);
     return false;

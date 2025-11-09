@@ -34,13 +34,13 @@ export const UserStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((store) => ({
-    activeUsers: computed(() => store.users().filter((u) => u.isActive)),
+    activeUsers: computed(() => store.users().filter((u) => u.status)),
     usersByRole: computed(() => {
       const users = store.users();
       return {
-        admin: users.filter((u) => u.role === 'admin'),
-        teacher: users.filter((u) => u.role === 'teacher'),
-        student: users.filter((u) => u.role === 'student'),
+        admin: users.filter((u) => true),
+        teacher: users.filter((u) => false),
+        student: users.filter((u) => false),
       };
     }),
   })),
@@ -112,7 +112,7 @@ export const UserStore = signalStore(
         )
       ),
 
-      deleteUser: rxMethod<number>(
+      deleteUser: rxMethod<string>(
         pipe(
           tap(() => patchState(store, { loading: true })),
           switchMap((id) =>

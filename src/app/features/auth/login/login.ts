@@ -41,7 +41,7 @@ export class Login {
   readonly vm = useLoginViewModel();
 
   loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required]),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(8),
@@ -53,12 +53,13 @@ export class Login {
     effect(() => {
       const user = this.vm.user();
       if (user) {
-        if (user.isFirstLogin) {
+        console.log(user);
+        if (user.mustSetNewPassword) {
           this.router.navigate(['/auth/set-password']);
-        } else if (!user.faceData) {
+        } else if (!user.faceFingerprint) {
           this.router.navigate(['/auth/face-registration']);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['protected/dashboard']);
         }
       }
     });

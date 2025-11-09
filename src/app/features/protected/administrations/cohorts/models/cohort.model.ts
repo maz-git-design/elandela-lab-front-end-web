@@ -1,8 +1,8 @@
 export interface Cohort {
   id: string;
   name: string;
-  description: string;
-  academicYearId: string;
+  academicYear: string;
+  description?: string;
   departmentId: string;
   capacity: number;
   currentEnrollment: number;
@@ -13,13 +13,17 @@ export interface Cohort {
 
 export interface CreateCohortRequest {
   name: string;
-  description: string;
-  academicYearId: string;
+  academicYear: string;
+  description?: string;
   departmentId: string;
-  capacity: number;
+  capacity?: number;
 }
 
-export interface UpdateCohortRequest extends CreateCohortRequest {
+export interface UpdateCohortRequest {
   id: string;
-  isActive: boolean;
+  name?: string;
+  academicYear?: string;
+  description?: string;
+  departmentId?: string;
+  capacity?: number;
 }

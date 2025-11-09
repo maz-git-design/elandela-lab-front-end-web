@@ -1,14 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
-import {
-  Lab,
-  LabSchedule,
-  CreateLabRequest,
-  UpdateLabRequest,
-  CreateScheduleRequest,
-  UpdateScheduleRequest,
-} from '../models/lab.model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Lab, LabSchedule, CreateLabRequest, UpdateLabRequest, CreateScheduleRequest } from '../models/lab.model';
 import { HttpService } from '../../../../core/services/http.service';
 
 @Injectable({
@@ -17,120 +10,87 @@ import { HttpService } from '../../../../core/services/http.service';
 export class LabService {
   private readonly http = inject(HttpService);
 
-  private mockSchedules: LabSchedule[] = [
-    {
-      id: '1',
-      labId: '1',
-      labName: 'Computer Lab A',
-      activityId: '1',
-      activityName: 'Programming Lab',
-      instructorId: '1',
-      instructorName: 'Dr. Smith',
-      cohortId: '1',
-      cohortName: 'CS-2024-A',
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      status: 'scheduled',
-      attendanceCount: 0,
-      expectedCount: 25,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-
   getLabs(): Observable<Lab[]> {
     return this.http.get<any[]>('labs').pipe(
-      map((labs) =>
-        labs.map((lab) => ({
-          id: lab._id,
-          name: lab.name,
-          description: lab.description,
-          location: lab.location,
-          capacity: lab.capacity,
-          currentOccupancy: lab.currentOccupancy || 0,
-          departmentId: lab.department,
-          departmentName: lab.departmentName || 'Unknown',
-          status: lab.status || 'available',
-          equipmentCount: lab.equipmentCount || 0,
-          isActive: lab.state === 'active',
-          createdAt: new Date(lab.createdAt),
-          updatedAt: new Date(lab.updatedAt),
-        }))
-      )
+      map(labs => labs.map(lab => this.mapLabFromBackend(lab)))
+    );
+  }
+
+  getLabById(id: string): Observable<Lab> {
+    return this.http.get<any>(`labs/${id}`).pipe(
+      map(lab => this.mapLabFromBackend(lab))
     );
   }
 
   createLab(request: CreateLabRequest): Observable<Lab> {
-    return this.http
-      .post<any>('labs', {
-        name: request.name,
-        description: request.description,
-        location: request.location,
-        capacity: request.capacity,
-        department: request.departmentId,
-      })
-      .pipe(
-        map((lab) => ({
-          id: lab._id,
-          name: lab.name,
-          description: lab.description,
-          location: lab.location,
-          capacity: lab.capacity,
-          currentOccupancy: lab.currentOccupancy || 0,
-          departmentId: lab.department,
-          departmentName: lab.departmentName || 'Unknown',
-          status: lab.status || 'available',
-          equipmentCount: lab.equipmentCount || 0,
-          isActive: lab.state === 'active',
-          createdAt: new Date(lab.createdAt),
-          updatedAt: new Date(lab.updatedAt),
-        }))
-      );
+    return this.http.post<any>('labs', request).pipe(
+      map(lab => this.mapLabFromBackend(lab))
+    );
   }
 
   updateLab(request: UpdateLabRequest): Observable<Lab> {
     return this.http.put<any>(`labs/${request.id}`, request).pipe(
-      map((lab) => ({
-        id: lab._id,
-        name: lab.name,
-        description: lab.description,
-        location: lab.location,
-        capacity: lab.capacity,
-        currentOccupancy: lab.currentOccupancy || 0,
-        departmentId: lab.department,
-        departmentName: lab.departmentName || 'Unknown',
-        status: lab.status || 'available',
-        equipmentCount: lab.equipmentCount || 0,
-        isActive: lab.state === 'active',
-        createdAt: new Date(lab.createdAt),
-        updatedAt: new Date(lab.updatedAt),
-      }))
+      map(lab => this.mapLabFromBackend(lab))
     );
   }
 
   deleteLab(id: string): Observable<boolean> {
-    return this.http.delete<any>(`labs/${id}`).pipe(map(() => true));
+    return this.http.delete<any>(`labs/${id}`).pipe(
+      map(() => true)
+    );
   }
 
   getSchedules(): Observable<LabSchedule[]> {
-    return of(this.mockSchedules).pipe(delay(500));
+    return this.http.get<any[]>('labs/schedules').pipe(
+      map(schedules => schedules.map(schedule => this.mapScheduleFromBackend(schedule)))
+    );
   }
 
   createSchedule(request: CreateScheduleRequest): Observable<LabSchedule> {
-    const schedule: LabSchedule = {
-      id: Date.now().toString(),
-      ...request,
-      labName: 'Lab Name',
-      activityName: 'Activity Name',
-      instructorName: 'Instructor Name',
-      cohortName: 'Cohort Name',
-      status: 'scheduled',
-      attendanceCount: 0,
-      expectedCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    return this.http.post<any>('labs/schedules', request).pipe(
+      map(schedule => this.mapScheduleFromBackend(schedule))
+    );
+  }
+
+  private mapLabFromBackend(lab: any): Lab {
+    return {
+      id: lab._id,
+      name: lab.name,
+      code: lab.code,
+      description: lab.description,
+      departmentId: lab.departmentId,
+      equipmentList: lab.equipmentList || [],
+      location: lab.location || { building: '', roomNumber: '', floor: 0 },
+      capacities: lab.capacities || { users: 0, equipment: 0 },
+      openingHours: lab.openingHours || [],
+      timetable: lab.timetable || [],
+      safetyRequirements: lab.safetyRequirements || [],
+      accessRestrictions: lab.accessRestrictions || { allowedRoles: [], minLevel: 0 },
+      managers: lab.managers || { students: [], lecturers: [], admins: [] },
+      status: lab.status || 'available',
+      createdAt: new Date(lab.createdAt),
+      updatedAt: new Date(lab.updatedAt),
     };
-    this.mockSchedules.push(schedule);
-    return of(schedule).pipe(delay(500));
+  }
+
+  private mapScheduleFromBackend(schedule: any): LabSchedule {
+    return {
+      id: schedule._id,
+      labId: schedule.labId,
+      labName: schedule.labName || '',
+      activityId: schedule.activityId,
+      activityName: schedule.activityName || '',
+      instructorId: schedule.instructorId,
+      instructorName: schedule.instructorName || '',
+      cohortId: schedule.cohortId,
+      cohortName: schedule.cohortName || '',
+      startTime: new Date(schedule.startTime),
+      endTime: new Date(schedule.endTime),
+      status: schedule.status || 'scheduled',
+      attendanceCount: schedule.attendanceCount || 0,
+      expectedCount: schedule.expectedCount || 0,
+      createdAt: new Date(schedule.createdAt),
+      updatedAt: new Date(schedule.updatedAt),
+    };
   }
 }

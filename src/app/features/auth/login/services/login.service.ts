@@ -25,6 +25,7 @@ export class LoginService {
             name: `${user.firstName} ${user.lastName}`,
             role: user.roles?.[0] || 'student',
             isFirstLogin: user.isFirstLogin || false,
+            mustSetNewPassword: user.mustSetNewPassword || false,
             faceData: user.faceFingerprint,
             profileCompletion: 75,
           },

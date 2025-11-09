@@ -1,10 +1,11 @@
-import { computed, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, of } from 'rxjs';
-import { LoginRequest, User } from '../models/login.model';
-import { LoginService } from '../services/login.service';
+import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { AppStore } from '../../../../store/app.store';
+import { LoginRequest } from '../models/login.model';
+import { LoginService } from '../services/login.service';
+import { User } from '../../../../core/services/user.service';
 
 interface LoginState {
   user: User | null;
@@ -44,6 +45,7 @@ export const LoginStore = signalStore(
                 });
               }),
               catchError((error) => {
+                console.log('Login error:', error.message);
                 patchState(store, { loading: false, loaded: true });
                 appStore.setError(error.message || 'Login failed');
                 return of(null);

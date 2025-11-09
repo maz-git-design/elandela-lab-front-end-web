@@ -36,7 +36,7 @@ export const LabStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((store) => ({
-    activeLabs: computed(() => store.labs().filter((l) => l.isActive)),
+    activeLabs: computed(() => store.labs().filter((l) => true)),
     availableLabs: computed(() =>
       store.labs().filter((l) => l.status === 'available')
     ),

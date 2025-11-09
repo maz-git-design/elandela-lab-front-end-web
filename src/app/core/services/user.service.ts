@@ -11,11 +11,12 @@ export interface User {
   studentId?: string;
   employeeId?: string;
   avatar?: string;
-  faceData?: string;
+  faceFingerprint?: string;
   profileCompletion?: number;
   dateOfBirth?: string;
   isFirstLogin?: boolean;
   address?: string;
+  mustSetNewPassword?: boolean;
 }
 
 @Injectable({

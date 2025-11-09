@@ -17,7 +17,6 @@ export const authRoutes: Routes = [
             (c) => c.ResetPassword
           ),
       },
-
       {
         path: 'set-password',
         loadComponent: () =>

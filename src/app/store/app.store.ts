@@ -15,7 +15,7 @@ export const AppStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => ({
-    setError: (error: string) => patchState(store, { error }),
+    setError: (error: any) => patchState(store, { error }),
     clearError: () => patchState(store, { error: null }),
     setOnlineStatus: (isOnline: boolean) => patchState(store, { isOnline }),
   }))

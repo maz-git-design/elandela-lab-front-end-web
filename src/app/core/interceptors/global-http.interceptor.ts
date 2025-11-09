@@ -25,8 +25,13 @@ function handleError(error: HttpErrorResponse, router: Router) {
       errorMessage = "No Internet Connection.";
       break;
     case 401:
-      errorMessage = 'Unauthorized. Please log in.';
-      router.navigate(['/auth/login']);
+      errorMessage = error.error?.message || 'Unauthorized. Please log in.';
+      // Only redirect if not on auth pages
+      const authPages = ['/auth/login', '/auth/set-password', '/auth/face-registration', '/auth/reset-password'];
+      const isOnAuthPage = authPages.some(page => router.url.includes(page));
+      if (!isOnAuthPage) {
+        router.navigate(['/auth/login']);
+      }
       break;
     case 400:
     case 403:

@@ -1,21 +1,10 @@
 export interface Module {
   id: string;
   name: string;
-  description: string;
-  path: string;
-  icon: string;
-  isActive: boolean;
-  permissions: Permission[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Permission {
-  id: string;
-  name: string;
-  description: string;
-  module: string;
-  action: string;
+  description?: string;
+  parentId?: string;
+  path?: string;
+  availableActions: ('Create' | 'Update' | 'List' | '*')[];
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -23,12 +12,17 @@ export interface Permission {
 
 export interface CreateModuleRequest {
   name: string;
-  description: string;
-  path: string;
-  icon: string;
+  description?: string;
+  parentId?: string;
+  path?: string;
+  availableActions: ('Create' | 'Update' | 'List' | '*')[];
 }
 
-export interface UpdateModuleRequest extends CreateModuleRequest {
+export interface UpdateModuleRequest {
   id: string;
-  isActive: boolean;
+  name?: string;
+  description?: string;
+  parentId?: string;
+  path?: string;
+  availableActions?: ('Create' | 'Update' | 'List' | '*')[];
 }

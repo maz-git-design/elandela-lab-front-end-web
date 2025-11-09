@@ -1,8 +1,8 @@
 export interface AcademicYear {
   id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
+  startingYear: number;
+  endingYear: number;
+  status?: string;
   isActive: boolean;
   isCurrent: boolean;
   createdAt: Date;
@@ -10,13 +10,14 @@ export interface AcademicYear {
 }
 
 export interface CreateAcademicYearRequest {
-  name: string;
-  startDate: Date;
-  endDate: Date;
+  startingYear: number;
+  endingYear: number;
+  status?: string;
 }
 
-export interface UpdateAcademicYearRequest extends CreateAcademicYearRequest {
+export interface UpdateAcademicYearRequest {
   id: string;
-  isActive: boolean;
-  isCurrent: boolean;
+  startingYear?: number;
+  endingYear?: number;
+  status?: string;
 }

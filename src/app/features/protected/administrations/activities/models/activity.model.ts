@@ -1,9 +1,8 @@
 export interface Activity {
   id: string;
   name: string;
-  description: string;
-  type: 'lab' | 'lecture' | 'exam' | 'project';
-  duration: number;
+  description?: string;
+  cohortId: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -11,12 +10,15 @@ export interface Activity {
 
 export interface CreateActivityRequest {
   name: string;
-  description: string;
-  type: 'lab' | 'lecture' | 'exam' | 'project';
-  duration: number;
+  description?: string;
+  cohortId: string;
+  isActive?: boolean;
 }
 
-export interface UpdateActivityRequest extends CreateActivityRequest {
+export interface UpdateActivityRequest {
   id: string;
-  isActive: boolean;
+  name?: string;
+  description?: string;
+  cohortId?: string;
+  isActive?: boolean;
 }
